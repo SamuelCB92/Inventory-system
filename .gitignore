@@ -1,0 +1,7 @@
+node_modules
+# Keep environment variables out of version control
+.env
+inventory_system_project_spec.md
+node_modules
+
+/generated/prisma
