@@ -10,5 +10,40 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  products     Product[]
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  sku       String
+  createdAt DateTime @default(now())
+
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions InventoryTransaction[]
+  @@unique([userId, sku])
+}
+
+enum TransactionType {
+  IN
+  OUT
+}
+
+model InventoryTransaction {
+  id        String          @id @default(uuid())
+  productId String
+  type      TransactionType
+  quantity  Int @db.Integer
+  createdAt DateTime        @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

@@ -1,7 +1,15 @@
-node_modules
-# Keep environment variables out of version control
-.env
-inventory_system_project_spec.md
+# dependencies
 node_modules
 
-/generated/prisma
+# environment variables
+.env
+backend/.env
+
+# prisma generated files
+prisma/generated
+backend/generated
+
+# personal project spec (not meant for repo)
+inventory_system_project_spec.md
+
+dist
