@@ -2,9 +2,9 @@
 
 🇺🇸 English | 🇧🇷 [Português](README.pt-BR.md)
 
-A backend-first inventory management API focused on clean architecture and real-world backend fundamentals.
+A backend inventory management API demonstrating RESTful CRUD operations with TypeScript and PostgreSQL.
 
-This project is built as a portfolio project to demonstrate authentication, relational modeling, validation, stock logic, and deployable API development.
+This project is built as a portfolio project to demonstrate clean API design, type-safe backend development, and relational database persistence.
 
 ## Tech Stack
 
@@ -13,68 +13,95 @@ This project is built as a portfolio project to demonstrate authentication, rela
 - TypeScript
 - Prisma ORM
 - PostgreSQL
-- JWT Authentication
-- bcrypt
+- i18n (English and Portuguese API responses)
 
-## Features (planned)
+## Features
 
-- User registration and login
-- JWT-based protected routes
-- Product CRUD per authenticated user
-- Inventory transactions (`IN` / `OUT`)
-- Computed stock (`SUM(IN) - SUM(OUT)`)
-- Low-stock checker (background job in later phase)
+- Create, read, update, delete inventory items
+- Quantity validation (cannot be negative)
+- Internationalized API responses (EN/PT-BR)
+- Clean TypeScript architecture
+- PostgreSQL persistence with Prisma
 
 ## Project Structure
 
-inventory-system
-├ backend
-│ ├ src
-│ │ ├ routes
-│ │ ├ controllers
-│ │ ├ services
-│ │ ├ middleware
-│ ├ package.json
-│ ├ tsconfig.json
-│ ├ prisma
-│ └ ...
-└ README.md
+```
+inventory-system/
+├─ backend/
+│  ├─ src/
+│  │  ├─ app.ts
+│  │  ├─ server.ts
+│  │  ├─ routes/
+│  │  ├─ i18n/
+│  │  └─ prisma/
+│  ├─ prisma/
+│  │  ├─ schema.prisma
+│  │  └─ migrations/
+│  ├─ package.json
+│  └─ tsconfig.json
+├─ README.md
+└─ README.pt-BR.md
+```
 
 ## Setup
 
 Clone the repository:
 
+```bash
 git clone <repo-url>
+```
 
 Install dependencies:
 
+```bash
 cd backend
 npm install
+```
 
 Create a `.env` file:
 
+```env
 DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_db
 PORT=3000
-JWT_SECRET=replace_with_a_strong_secret
+```
 
 Run the development server:
 
+```bash
 npm run dev
+```
 
-## Planned API
+## API Endpoints
 
-POST /auth/register
-POST /auth/login
+```
+POST   /items      # Create inventory item
+GET    /items      # List all items
+GET    /items/:id  # Get single item
+PATCH  /items/:id  # Update item
+DELETE /items/:id  # Delete item
+GET    /health     # Health check
+```
 
-POST /products
-GET /products
-GET /products/:id
-PATCH /products/:id
-DELETE /products/:id
+## Data Model
 
-POST /products/:id/transactions
-GET /products/:id/stock
+```typescript
+model Item {
+  id        String   @id @default(uuid())
+  name      String
+  quantity  Int      // >= 0
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+## Business Rules
+
+- `quantity` cannot be negative
+- Creating an item requires `name` and `quantity`
+- API responses include success/error messages in English or Portuguese
+- Consistent JSON error structure
 
 ## Status
 
-Work in progress.
+Phase 1-2 Complete: Foundation and database setup.
+Phase 3 In Progress: CRUD endpoints implementation.

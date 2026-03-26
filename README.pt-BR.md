@@ -2,79 +2,106 @@
 
 🇧🇷 Português | 🇺🇸 [English](README.md)
 
-Uma API backend-first de gestão de inventário com foco em arquitetura limpa e fundamentos reais de backend.
+Uma API de gestão de inventário backend demonstrando operações CRUD RESTful com TypeScript e PostgreSQL.
 
-Este projeto está sendo desenvolvido como portfólio para demonstrar autenticação, modelagem relacional, validação, lógica de estoque e construção de API pronta para deploy.
+Este projeto é desenvolvido como portfólio para demonstrar design de API limpo, desenvolvimento backend type-safe e persistência em banco de dados relacional.
 
-## Stack
+## Stack Tecnológico
 
 - Node.js
 - Express
 - TypeScript
 - Prisma ORM
 - PostgreSQL
-- JWT
-- bcrypt
+- i18n (respostas da API em inglês e português)
 
-## Funcionalidades (planejadas)
+## Funcionalidades
 
-- Registro e login de usuário
-- Rotas protegidas com JWT
-- CRUD de produtos por usuário autenticado
-- Transações de estoque (`IN` / `OUT`)
-- Estoque calculado (`SUM(IN) - SUM(OUT)`)
-- Verificação de baixo estoque (job em fase posterior)
+- Criar, ler, atualizar, deletar itens de inventário
+- Validação de quantidade (não pode ser negativa)
+- Respostas da API internacionalizadas (EN/PT-BR)
+- Arquitetura TypeScript limpa
+- Persistência PostgreSQL com Prisma
 
 ## Estrutura do Projeto
 
-inventory-system
-├ backend
-│ ├ src
-│ │ ├ routes
-│ │ ├ controllers
-│ │ ├ services
-│ │ ├ middleware
-│ ├ package.json
-│ ├ tsconfig.json
-│ ├ prisma
-│ └ ...
-└ README.pt-BR.md
+```
+inventory-system/
+├─ backend/
+│  ├─ src/
+│  │  ├─ app.ts
+│  │  ├─ server.ts
+│  │  ├─ routes/
+│  │  ├─ i18n/
+│  │  └─ prisma/
+│  ├─ prisma/
+│  │  ├─ schema.prisma
+│  │  └─ migrations/
+│  ├─ package.json
+│  └─ tsconfig.json
+├─ README.md
+└─ README.pt-BR.md
+```
 
 ## Instalação
 
 Clone o repositório:
 
+```bash
 git clone <repo-url>
+```
 
 Instale as dependências:
 
+```bash
 cd backend
 npm install
+```
 
 Crie um arquivo `.env`:
 
+```env
 DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_db
 PORT=3000
-JWT_SECRET=substitua_por_um_segredo_forte
+```
 
 Execute o servidor:
 
+```bash
 npm run dev
+```
 
-## API Planejada
+## Endpoints da API
 
-POST /auth/register
-POST /auth/login
+```
+POST   /items      # Criar item de inventário
+GET    /items      # Listar todos os itens
+GET    /items/:id  # Obter item único
+PATCH  /items/:id  # Atualizar item
+DELETE /items/:id  # Deletar item
+GET    /health     # Verificação de saúde
+```
 
-POST /products
-GET /products
-GET /products/:id
-PATCH /products/:id
-DELETE /products/:id
+## Modelo de Dados
 
-POST /products/:id/transactions
-GET /products/:id/stock
+```typescript
+model Item {
+  id        String   @id @default(uuid())
+  name      String
+  quantity  Int      // >= 0
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+## Regras de Negócio
+
+- `quantity` não pode ser negativa
+- Criar um item requer `name` e `quantity`
+- Respostas da API incluem mensagens de sucesso/erro em inglês ou português
+- Estrutura de erro JSON consistente
 
 ## Status
 
-Em progresso.
+Fase 1-2 Completa: Fundamentos e configuração do banco.
+Fase 3 Em Progresso: Implementação dos endpoints CRUD.

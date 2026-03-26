@@ -12,4 +12,9 @@ backend/generated
 # personal project spec (not meant for repo)
 inventory_system_project_spec.md
 
+# development tools
+backend/requests.http
+
+dist
+
 dist
