@@ -1,22 +1,38 @@
 import { Router } from "express";
+import { getMessage, getLang } from "../utils/i18n";
 
 const itemsRouter = Router();
 
 // POST /items - Create inventory item
 itemsRouter.post("/", async (req, res) => {
+  const lang = getLang(req);
   const { name, quantity } = req.body ?? {};
 
-  if (!name || quantity === undefined) {
+  if (!name) {
     return res.status(400).json({
-      error: "Invalid input",
-      message: "Name and quantity are required",
+      success: false,
+      message: getMessage("nameRequired", lang),
     });
   }
 
-  if (typeof quantity !== "number" || quantity < 0) {
+  if (quantity === undefined) {
     return res.status(400).json({
-      error: "Invalid quantity",
-      message: "Quantity must be a non-negative number",
+      success: false,
+      message: getMessage("quantityRequired", lang),
+    });
+  }
+
+  if (typeof name !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: getMessage("nameMustBeString", lang),
+    });
+  }
+
+  if (!Number.isInteger(quantity) || quantity < 0) {
+    return res.status(400).json({
+      success: false,
+      message: getMessage("quantityMustBeNonNegative", lang),
     });
   }
 
@@ -29,20 +45,23 @@ itemsRouter.post("/", async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Item created successfully",
-      item,
+      success: true,
+      message: getMessage("itemCreated", lang),
+      data: item,
     });
   } catch (error) {
     console.error("Error creating item:", error);
     res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to create item",
+      success: false,
+      message: "Internal server error",
     });
   }
 });
 
 // GET /items - List all items
 itemsRouter.get("/", async (req, res) => {
+  const lang = getLang(req);
+
   try {
     const { PrismaClient } = await import("@prisma/client");
     const prisma = new PrismaClient();
@@ -52,21 +71,22 @@ itemsRouter.get("/", async (req, res) => {
     });
 
     res.json({
-      message: "Items retrieved successfully",
-      items,
-      count: items.length,
+      success: true,
+      message: getMessage("itemsListed", lang),
+      data: { items, count: items.length },
     });
   } catch (error) {
     console.error("Error retrieving items:", error);
     res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to retrieve items",
+      success: false,
+      message: "Internal server error",
     });
   }
 });
 
 // GET /items/:id - Get single item
 itemsRouter.get("/:id", async (req, res) => {
+  const lang = getLang(req);
   const { id } = req.params;
 
   try {
@@ -79,36 +99,42 @@ itemsRouter.get("/:id", async (req, res) => {
 
     if (!item) {
       return res.status(404).json({
-        error: "Not found",
-        message: "Item not found",
+        success: false,
+        message: getMessage("itemNotFound", lang),
       });
     }
 
     res.json({
-      message: "Item retrieved successfully",
-      item,
+      success: true,
+      message: getMessage("itemRetrieved", lang),
+      data: item,
     });
   } catch (error) {
     console.error("Error retrieving item:", error);
     res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to retrieve item",
+      success: false,
+      message: "Internal server error",
     });
   }
 });
 
 // PATCH /items/:id - Update item
 itemsRouter.patch("/:id", async (req, res) => {
+  const lang = getLang(req);
   const { id } = req.params;
   const { name, quantity } = req.body ?? {};
 
-  if (
-    quantity !== undefined &&
-    (typeof quantity !== "number" || quantity < 0)
-  ) {
+  if (name !== undefined && typeof name !== "string") {
     return res.status(400).json({
-      error: "Invalid quantity",
-      message: "Quantity must be a non-negative number",
+      success: false,
+      message: getMessage("nameMustBeString", lang),
+    });
+  }
+
+  if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
+    return res.status(400).json({
+      success: false,
+      message: getMessage("quantityMustBeNonNegative", lang),
     });
   }
 
@@ -122,8 +148,8 @@ itemsRouter.patch("/:id", async (req, res) => {
 
     if (!existingItem) {
       return res.status(404).json({
-        error: "Not found",
-        message: "Item not found",
+        success: false,
+        message: getMessage("itemNotFound", lang),
       });
     }
 
@@ -137,20 +163,22 @@ itemsRouter.patch("/:id", async (req, res) => {
     });
 
     res.json({
-      message: "Item updated successfully",
-      item,
+      success: true,
+      message: getMessage("itemUpdated", lang),
+      data: item,
     });
   } catch (error) {
     console.error("Error updating item:", error);
     res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to update item",
+      success: false,
+      message: "Internal server error",
     });
   }
 });
 
 // DELETE /items/:id - Delete item
 itemsRouter.delete("/:id", async (req, res) => {
+  const lang = getLang(req);
   const { id } = req.params;
 
   try {
@@ -163,8 +191,8 @@ itemsRouter.delete("/:id", async (req, res) => {
 
     if (!existingItem) {
       return res.status(404).json({
-        error: "Not found",
-        message: "Item not found",
+        success: false,
+        message: getMessage("itemNotFound", lang),
       });
     }
 
@@ -173,13 +201,14 @@ itemsRouter.delete("/:id", async (req, res) => {
     });
 
     res.json({
-      message: "Item deleted successfully",
+      success: true,
+      message: getMessage("itemDeleted", lang),
     });
   } catch (error) {
     console.error("Error deleting item:", error);
     res.status(500).json({
-      error: "Internal server error",
-      message: "Failed to delete item",
+      success: false,
+      message: "Internal server error",
     });
   }
 });

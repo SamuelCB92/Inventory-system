@@ -1,5 +1,15 @@
 {
   "itemCreated": "Item criado com sucesso",
+  "itemRetrieved": "Item recuperado com sucesso",
+  "itemUpdated": "Item atualizado com sucesso",
+  "itemDeleted": "Item excluído com sucesso",
+  "itemsListed": "Itens recuperados com sucesso",
   "itemNotFound": "Item não encontrado",
-  "invalidInput": "Entrada inválida"
+  "invalidInput": "Entrada inválida",
+  "nameRequired": "Nome é obrigatório",
+  "quantityRequired": "Quantidade é obrigatória",
+  "quantityMustBeNonNegative": "Quantidade deve ser não negativa",
+  "quantityMustBeInteger": "Quantidade deve ser um inteiro",
+  "nameMustBeString": "Nome deve ser uma string",
+  "idInvalid": "ID do item inválido"
 }

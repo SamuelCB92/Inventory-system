@@ -1,5 +1,15 @@
 {
   "itemCreated": "Item created successfully",
+  "itemRetrieved": "Item retrieved successfully",
+  "itemUpdated": "Item updated successfully",
+  "itemDeleted": "Item deleted successfully",
+  "itemsListed": "Items retrieved successfully",
   "itemNotFound": "Item not found",
-  "invalidInput": "Invalid input"
+  "invalidInput": "Invalid input",
+  "nameRequired": "Name is required",
+  "quantityRequired": "Quantity is required",
+  "quantityMustBeNonNegative": "Quantity must be non-negative",
+  "quantityMustBeInteger": "Quantity must be an integer",
+  "nameMustBeString": "Name must be a string",
+  "idInvalid": "Invalid item ID"
 }
