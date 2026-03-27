@@ -4,7 +4,7 @@
 
 A backend inventory management API demonstrating RESTful CRUD operations with TypeScript and PostgreSQL.
 
-This project is built as a portfolio project to demonstrate clean API design, type-safe backend development, and relational database persistence.
+This project is built as a portfolio project to showcase clean API design, type-safe backend development and relational database persistence.
 
 ## Tech Stack
 
@@ -17,69 +17,260 @@ This project is built as a portfolio project to demonstrate clean API design, ty
 
 ## Features
 
-- Create, read, update, delete inventory items
-- Quantity validation (cannot be negative)
-- Internationalized API responses (EN/PT-BR)
-- Clean TypeScript architecture
-- PostgreSQL persistence with Prisma
+- ✅ Create, read, update, delete inventory items
+- ✅ Quantity validation (non-negative integers)
+- ✅ Internationalized API responses (English/Portuguese)
+- ✅ Type-safe TypeScript architecture
+- ✅ PostgreSQL persistence with Prisma ORM
 
-## Project Structure
+## Quick Start
 
-```
-inventory-system/
-├─ backend/
-│  ├─ src/
-│  │  ├─ app.ts
-│  │  ├─ server.ts
-│  │  ├─ routes/
-│  │  ├─ i18n/
-│  │  └─ prisma/
-│  ├─ prisma/
-│  │  ├─ schema.prisma
-│  │  └─ migrations/
-│  ├─ package.json
-│  └─ tsconfig.json
-├─ README.md
-└─ README.pt-BR.md
-```
+### Prerequisites
 
-## Setup
+- Node.js (v18+)
+- PostgreSQL (running locally or remote connection)
 
-Clone the repository:
+### Installation
 
 ```bash
 git clone <repo-url>
-```
-
-Install dependencies:
-
-```bash
 cd backend
 npm install
 ```
 
-Create a `.env` file:
+### Environment Setup
+
+Create a `.env` file in the `backend/` directory:
 
 ```env
 DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_db
 PORT=3000
 ```
 
-Run the development server:
+### Run Development Server
 
 ```bash
 npm run dev
 ```
 
-## API Endpoints
+Server starts on `http://localhost:3000`
+
+## API Documentation
+
+### Base URL
 
 ```
-POST   /items      # Create inventory item
-GET    /items      # List all items
-GET    /items/:id  # Get single item
-PATCH  /items/:id  # Update item
-DELETE /items/:id  # Delete item
-GET    /health     # Health check
+http://localhost:3000
+```
+
+### Response Format
+
+All API responses follow a consistent JSON structure:
+
+**Success Response:**
+
+```json
+{
+  "success": true,
+  "message": "Item created successfully",
+  "data": { ... }
+}
+```
+
+**Error Response:**
+
+```json
+{
+  "success": false,
+  "message": "Name is required"
+}
+```
+
+### Internationalization (i18n)
+
+All API messages support English (`en`) and Portuguese (`pt-BR`).
+
+**Request with language parameter:**
+
+```
+GET /items?lang=pt-BR
+```
+
+**Portuguese Response:**
+
+```json
+{
+  "success": true,
+  "message": "Itens recuperados com sucesso",
+  "data": { "items": [...], "count": 1 }
+}
+```
+
+If no language is specified, the API defaults to English.
+
+### Endpoints
+
+#### 1. Create Item
+
+**Request:**
+
+```
+POST /items?lang=en
+Content-Type: application/json
+
+{
+  "name": "Laptop",
+  "quantity": 5
+}
+```
+
+**Success Response (201 Created):**
+
+```json
+{
+  "success": true,
+  "message": "Item created successfully",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Laptop",
+    "quantity": 5,
+    "createdAt": "2026-03-27T06:32:23.638Z",
+    "updatedAt": "2026-03-27T06:32:23.638Z"
+  }
+}
+```
+
+**Error Response (400 Bad Request):**
+
+```json
+{
+  "success": false,
+  "message": "Name is required"
+}
+```
+
+#### 2. List All Items
+
+**Request:**
+
+```
+GET /items?lang=en
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Items retrieved successfully",
+  "data": {
+    "items": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Laptop",
+        "quantity": 5,
+        "createdAt": "2026-03-27T06:32:23.638Z",
+        "updatedAt": "2026-03-27T06:32:23.638Z"
+      }
+    ],
+    "count": 1
+  }
+}
+```
+
+#### 3. Get Single Item
+
+**Request:**
+
+```
+GET /items/:id?lang=en
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Item retrieved successfully",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Laptop",
+    "quantity": 5,
+    "createdAt": "2026-03-27T06:32:23.638Z",
+    "updatedAt": "2026-03-27T06:32:23.638Z"
+  }
+}
+```
+
+**Error Response (404 Not Found):**
+
+```json
+{
+  "success": false,
+  "message": "Item not found"
+}
+```
+
+#### 4. Update Item
+
+**Request:**
+
+```
+PATCH /items/:id?lang=en
+Content-Type: application/json
+
+{
+  "quantity": 10
+}
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Item updated successfully",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Laptop",
+    "quantity": 10,
+    "createdAt": "2026-03-27T06:32:23.638Z",
+    "updatedAt": "2026-03-27T10:00:00.000Z"
+  }
+}
+```
+
+#### 5. Delete Item
+
+**Request:**
+
+```
+DELETE /items/:id?lang=en
+```
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Item deleted successfully"
+}
+```
+
+#### 6. Health Check
+
+**Request:**
+
+```
+GET /health
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "status": "ok"
+}
 ```
 
 ## Data Model
@@ -88,7 +279,7 @@ GET    /health     # Health check
 model Item {
   id        String   @id @default(uuid())
   name      String
-  quantity  Int      // >= 0
+  quantity  Int      // Must be >= 0
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -96,12 +287,8 @@ model Item {
 
 ## Business Rules
 
-- `quantity` cannot be negative
-- Creating an item requires `name` and `quantity`
-- API responses include success/error messages in English or Portuguese
-- Consistent JSON error structure
-
-## Status
-
-Phase 1-2 Complete: Foundation and database setup.
-Phase 3 In Progress: CRUD endpoints implementation.
+- **Quantity Validation**: Must be a non-negative integer (>= 0)
+- **Required Fields**: Creating an item requires both `name` and `quantity`
+- **Type Safety**: Name must be a string, quantity must be an integer
+- **Consistency**: All API responses follow the standard JSON format
+- **Error Handling**: All errors include localized messages and appropriate HTTP status codes

@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { getMessage, getLang } from "../utils/i18n";
+import { PrismaClient } from "@prisma/client";
 
 const itemsRouter = Router();
+const prisma = new PrismaClient();
 
 // POST /items - Create inventory item
 itemsRouter.post("/", async (req, res) => {
@@ -37,9 +39,6 @@ itemsRouter.post("/", async (req, res) => {
   }
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-
     const item = await prisma.item.create({
       data: { name, quantity },
     });
@@ -63,9 +62,6 @@ itemsRouter.get("/", async (req, res) => {
   const lang = getLang(req);
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-
     const items = await prisma.item.findMany({
       orderBy: { createdAt: "desc" },
     });
@@ -90,9 +86,6 @@ itemsRouter.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-
     const item = await prisma.item.findUnique({
       where: { id },
     });
@@ -139,9 +132,6 @@ itemsRouter.patch("/:id", async (req, res) => {
   }
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-
     const existingItem = await prisma.item.findUnique({
       where: { id },
     });
@@ -182,9 +172,6 @@ itemsRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-
     const existingItem = await prisma.item.findUnique({
       where: { id },
     });
