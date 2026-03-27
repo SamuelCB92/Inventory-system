@@ -292,3 +292,79 @@ model Item {
 - **Type Safety**: Name must be a string, quantity must be an integer
 - **Consistency**: All API responses follow the standard JSON format
 - **Error Handling**: All errors include localized messages and appropriate HTTP status codes
+
+## Testing
+
+### Running Tests
+
+The project includes a comprehensive test suite with 13 automated tests covering all API endpoints and edge cases.
+
+```bash
+cd backend
+npm test
+```
+
+### Test Database Setup
+
+Tests use a separate, isolated PostgreSQL database to prevent data contamination:
+
+**Create Test Database:**
+
+```bash
+psql -U postgres -c "CREATE DATABASE inventory_test_db;"
+```
+
+**Configure Test Environment:**
+
+Create `.env.test` in the `backend/` directory:
+
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_test_db
+PORT=3000
+```
+
+**Run Migrations on Test Database:**
+
+```bash
+$env:DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_test_db"; npx prisma migrate deploy
+```
+
+### Test Coverage
+
+**POST /items** (4 tests)
+
+- ✅ Create item with valid data
+- ✅ Error when name is missing
+- ✅ Error when quantity is negative
+- ✅ Portuguese message when lang=pt-BR
+
+**GET /items** (2 tests)
+
+- ✅ List all items
+- ✅ Return empty list when no items exist
+
+**GET /items/:id** (2 tests)
+
+- ✅ Get a single item
+- ✅ Return 404 for non-existent item
+
+**PATCH /items/:id** (2 tests)
+
+- ✅ Update an item
+- ✅ Return 404 when updating non-existent item
+
+**DELETE /items/:id** (2 tests)
+
+- ✅ Delete an item
+- ✅ Return 404 when deleting non-existent item
+
+**Health Check** (1 test)
+
+- ✅ Return health status
+
+### Test Stack
+
+- **Jest**: Testing framework
+- **Supertest**: HTTP assertions for API testing
+- **ts-jest**: TypeScript support in Jest
+- **Prisma Client**: ORM for test database operations

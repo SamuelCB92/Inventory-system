@@ -292,3 +292,73 @@ model Item {
 - **Type Safety**: Nome deve ser uma string, quantidade deve ser um inteiro
 - **Consistência**: Todas as respostas da API seguem o formato JSON padrão
 - **Tratamento de Erros**: Todos os erros incluem mensagens localizadas e códigos HTTP apropriados
+
+## Testes
+
+### Executando Testes
+
+O projeto inclui um conjunto de testes abrangente com 13 testes automatizados cobrindo todos os endpoints da API e casos extremos.
+
+```bash
+cd backend
+npm test
+```
+
+### Configuração do Banco de Dados de Teste
+
+Os testes usam um banco de dados PostgreSQL separado e isolado para evitar contaminação de dados:
+
+**Criar Banco de Dados de Teste:**
+
+```bash
+psql -U postgres -c "CREATE DATABASE inventory_test_db;"
+```
+
+**Configurar Ambiente de Teste:**
+
+Crie `.env.test` no diretório `backend/`:
+
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_test_db
+PORT=3000
+```
+
+**Executar Migrações no Banco de Dados de Teste:**
+
+```bash
+$env:DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_test_db"; npx prisma migrate deploy
+```
+
+### Cobertura de Testes
+
+**POST /items** (4 testes)
+- ✅ Criar item com dados válidos
+- ✅ Erro quando nome está faltando
+- ✅ Erro quando quantidade é negativa
+- ✅ Mensagem em português quando lang=pt-BR
+
+**GET /items** (2 testes)
+- ✅ Listar todos os itens
+- ✅ Retornar lista vazia quando não há itens
+
+**GET /items/:id** (2 testes)
+- ✅ Obter um item único
+- ✅ Retornar 404 para item não existente
+
+**PATCH /items/:id** (2 testes)
+- ✅ Atualizar um item
+- ✅ Retornar 404 ao atualizar item não existente
+
+**DELETE /items/:id** (2 testes)
+- ✅ Deletar um item
+- ✅ Retornar 404 ao deletar item não existente
+
+**Verificação de Saúde** (1 teste)
+- ✅ Retornar status de saúde
+
+### Stack de Testes
+
+- **Jest**: Framework de testes
+- **Supertest**: Assertions HTTP para testes de API
+- **ts-jest**: Suporte TypeScript no Jest
+- **Prisma Client**: ORM para operações do banco de dados de teste
