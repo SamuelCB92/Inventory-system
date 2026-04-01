@@ -12,6 +12,10 @@ backend/generated
 
 # personal project spec (not meant for repo)
 inventory_system_project_spec.md
+PROJECT_SUMMARY.md
+INTERVIEW_GUIDE.md
+ARCHITECTURE.md
+TO-DO.md
 
 # development tools
 backend/requests.http
