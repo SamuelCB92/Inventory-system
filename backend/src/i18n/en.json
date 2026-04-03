@@ -8,8 +8,7 @@
   "invalidInput": "Invalid input",
   "nameRequired": "Name is required",
   "quantityRequired": "Quantity is required",
-  "quantityMustBeNonNegative": "Quantity must be non-negative",
-  "quantityMustBeInteger": "Quantity must be an integer",
+  "quantityMustBeNonNegative": "Quantity must be a non-negative integer",
   "nameMustBeString": "Name must be a string",
   "idInvalid": "Invalid item ID",
   "internalServerError": "Internal server error"

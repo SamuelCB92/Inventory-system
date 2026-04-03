@@ -156,3 +156,46 @@ describe("Items API", () => {
     });
   });
 });
+
+describe("POST /items validation", () => {
+  it("should return 400 for name not string", async () => {
+    const response = await request(app)
+      .post("/items")
+      .send({ name: 123, quantity: 5 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Name must be a string");
+  });
+
+  it("should return 400 for quantity not integer", async () => {
+    const response = await request(app)
+      .post("/items")
+      .send({ name: "Test", quantity: 3.5 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe(
+      "Quantity must be a non-negative integer",
+    );
+  });
+});
+
+describe("PATCH /items/:id validation", () => {
+  it("should return 400 for quantity not integer on update", async () => {
+    const createResponse = await request(app)
+      .post("/items")
+      .send({ name: "Test", quantity: 1 });
+    const id = createResponse.body.data.id;
+
+    const response = await request(app)
+      .patch(`/items/${id}`)
+      .send({ quantity: "not a number" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe(
+      "Quantity must be a non-negative integer",
+    );
+  });
+});

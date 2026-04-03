@@ -8,8 +8,7 @@
   "invalidInput": "Entrada inválida",
   "nameRequired": "Nome é obrigatório",
   "quantityRequired": "Quantidade é obrigatória",
-  "quantityMustBeNonNegative": "Quantidade deve ser não negativa",
-  "quantityMustBeInteger": "Quantidade deve ser um inteiro",
+  "quantityMustBeNonNegative": "Quantidade deve ser um inteiro não negativo",
   "nameMustBeString": "Nome deve ser uma string",
   "idInvalid": "ID do item inválido",
   "internalServerError": "Erro interno do servidor"
