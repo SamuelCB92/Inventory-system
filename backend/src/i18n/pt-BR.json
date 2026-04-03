@@ -11,5 +11,6 @@
   "quantityMustBeNonNegative": "Quantidade deve ser não negativa",
   "quantityMustBeInteger": "Quantidade deve ser um inteiro",
   "nameMustBeString": "Nome deve ser uma string",
-  "idInvalid": "ID do item inválido"
+  "idInvalid": "ID do item inválido",
+  "internalServerError": "Erro interno do servidor"
 }

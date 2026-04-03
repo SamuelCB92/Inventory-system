@@ -1,3 +1,7 @@
+import {
+  validateCreateItem,
+  validateUpdateItem,
+} from "../middleware/validation.middleware";
 import { Router } from "express";
 import { getMessage, getLang } from "../utils/i18n";
 import { PrismaClient } from "@prisma/client";
@@ -6,37 +10,9 @@ const itemsRouter = Router();
 const prisma = new PrismaClient();
 
 // POST /items - Create inventory item
-itemsRouter.post("/", async (req, res) => {
+itemsRouter.post("/", validateCreateItem, async (req, res) => {
   const lang = getLang(req);
   const { name, quantity } = req.body ?? {};
-
-  if (!name) {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("nameRequired", lang),
-    });
-  }
-
-  if (quantity === undefined) {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("quantityRequired", lang),
-    });
-  }
-
-  if (typeof name !== "string") {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("nameMustBeString", lang),
-    });
-  }
-
-  if (!Number.isInteger(quantity) || quantity < 0) {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("quantityMustBeNonNegative", lang),
-    });
-  }
 
   try {
     const item = await prisma.item.create({
@@ -112,24 +88,10 @@ itemsRouter.get("/:id", async (req, res) => {
 });
 
 // PATCH /items/:id - Update item
-itemsRouter.patch("/:id", async (req, res) => {
+itemsRouter.patch("/:id", validateUpdateItem, async (req, res) => {
   const lang = getLang(req);
   const { id } = req.params;
   const { name, quantity } = req.body ?? {};
-
-  if (name !== undefined && typeof name !== "string") {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("nameMustBeString", lang),
-    });
-  }
-
-  if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
-    return res.status(400).json({
-      success: false,
-      message: getMessage("quantityMustBeNonNegative", lang),
-    });
-  }
 
   try {
     const existingItem = await prisma.item.findUnique({
