@@ -1,4 +1,4 @@
-# 📦 Sistema de Inventário Full-Stack
+# Sistema de Inventário Full-Stack
 
 🇧🇷 **Português** | 🇺🇸 [English](README.md)
 
@@ -69,6 +69,25 @@ npm install
 npm run dev
 ```
 *O dashboard estará disponível em `http://localhost:5173`.*
+
+---
+
+## Docker Quick Start (Recomendado)
+
+A maneira mais fácil de rodar todo o projeto (Banco de Dados, API e Dashboard) é através do Docker.
+
+### 1. Iniciar o Projeto
+```bash
+docker-compose up --build
+```
+- **Dashboard**: `http://localhost:5173`
+- **Backend API**: `http://localhost:3000`
+
+### 2. Rodar Testes Automatizados no Docker
+```bash
+docker-compose run --rm backend-test
+```
+*Isso inicia um banco de dados de teste dedicado, executa a suíte Jest e limpa tudo após a conclusão.*
 
 ---
 

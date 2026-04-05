@@ -72,6 +72,25 @@ npm run dev
 
 ---
 
+## Docker Quick Start (Recommended)
+
+The easiest way to run the entire project (Database, API, and Dashboard) is through Docker.
+
+### 1. Launch the Stack
+```bash
+docker-compose up --build
+```
+- **Dashboard**: `http://localhost:5173`
+- **Backend API**: `http://localhost:3000`
+
+### 2. Run Automated Tests in Docker
+```bash
+docker-compose run --rm backend-test
+```
+*This spins up a dedicated test database, runs the Jest suite, and cleans up after completion.*
+
+---
+
 ## API Reference
 
 All requests follow the structure: `http://localhost:3000/items?lang=en`
