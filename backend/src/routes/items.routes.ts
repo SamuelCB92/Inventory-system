@@ -7,10 +7,16 @@ import * as itemsController from "../controllers/items.controller";
 
 const itemsRouter = Router();
 
+// GET /items/low-stock - Items below threshold (must be before /:id)
+itemsRouter.get("/low-stock", itemsController.getLowStockItems);
+
+// GET /items/categories - Distinct category list
+itemsRouter.get("/categories", itemsController.getCategories);
+
 // POST /items - Create inventory item
 itemsRouter.post("/", validateCreateItem, itemsController.createItem);
 
-// GET /items - List all items
+// GET /items - List items (paginated, filterable)
 itemsRouter.get("/", itemsController.getItems);
 
 // GET /items/:id - Get single item
