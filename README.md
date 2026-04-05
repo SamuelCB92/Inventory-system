@@ -1,370 +1,123 @@
-# Inventory System
+# Full-Stack Inventory System
 
-🇺🇸 English | 🇧🇷 [Português](README.pt-BR.md)
+🇺🇸 **English** | 🇧🇷 [Português](README.pt-BR.md)
 
-A backend inventory management API demonstrating RESTful CRUD operations with TypeScript and PostgreSQL.
+A specialized inventory management dashboard built with a professional, type-safe full-stack architecture. This project showcases **React (Vite)** on the frontend and **Node.js (Express)** on the backend, featuring a customized dark-mode aesthetic and robust multi-language support.
 
-This project is built as a portfolio project to showcase clean API design, type-safe backend development and relational database persistence.
-
-## Tech Stack
-
-- Node.js
-- Express
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-- i18n (English and Portuguese API responses)
+---
 
 ## Features
 
-- ✅ Create, read, update, delete inventory items
-- ✅ Quantity validation (non-negative integers)
-- ✅ Internationalized API responses (English/Portuguese)
-- ✅ Type-safe TypeScript architecture
-- ✅ PostgreSQL persistence with Prisma ORM
+- **Interactive Dashboard**: Modern UI with real-time statistics (Total Items, Categories, Low Stock).
+- **Multi-language Support (i18n)**: Fully translated UI and specialized database fields for localized item content (English & Portuguese).
+- **Advanced Inventory Management**: 
+    - Full CRUD operations with instant UI updates.
+    - Specialized SKU tracking.
+    - Automated Low Stock indicators.
+- **Robust Backend**:
+    - RESTful API with standardized JSON responses.
+    - Advanced filtering, searching, and pagination.
+    - Type-safe persistence using **Prisma ORM** and **PostgreSQL**.
+
+---
+
+## Tech Stack
+
+### Frontend
+- **React 18** + **Vite** (for blazing fast HMR).
+- **TypeScript** for end-to-end type safety.
+- **Custom CSS** (Vanilla) with a focus on modern glassmorphism and dark-mode aesthetics.
+- **React Hooks** for sophisticated state management.
+
+### Backend
+- **Node.js** + **Express**.
+- **Prisma ORM** (Client-side typing).
+- **PostgreSQL** relational database.
+- **Jest/Supertest** for comprehensive integration testing.
+
+---
 
 ## Quick Start
 
 ### Prerequisites
-
 - Node.js (v18+)
-- PostgreSQL (running locally or remote connection)
+- PostgreSQL (running locally or a remote connection string)
 
-### Installation
+### 1. Database Setup
+1. Create a database in PostgreSQL (e.g., `inventory_db`).
+2. Update the `backend/.env` with your `DATABASE_URL`.
 
+### 2. Backend Installation & Setup
 ```bash
-git clone <repo-url>
 cd backend
 npm install
-```
 
-### Environment Setup
+# Run migrations to set up the schema
+npx prisma migrate dev --name init
 
-Create a `.env` file in the `backend/` directory:
-
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_db
-PORT=3000
-```
-
-### Run Development Server
-
-```bash
+# Start dev server
 npm run dev
 ```
+*The API will be available at `http://localhost:3000`.*
 
-Server starts on `http://localhost:3000`
+### 3. Frontend Installation & Setup
+```bash
+cd frontend
+npm install
 
-## API Documentation
-
-### Base URL
-
+# Start dev server
+npm run dev
 ```
-http://localhost:3000
-```
+*The dashboard will be available at `http://localhost:5173`.*
 
-### Response Format
+---
 
-All API responses follow a consistent JSON structure:
+## API Reference
 
-**Success Response:**
+All requests follow the structure: `http://localhost:3000/items?lang=en`
 
-```json
-{
-  "success": true,
-  "message": "Item created successfully",
-  "data": { ... }
-}
-```
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/items` | List items (supports `page`, `limit`, `search`, `category`) |
+| `POST` | `/items` | Create a new item |
+| `GET` | `/items/:id` | Get details for a single item |
+| `PATCH` | `/items/:id` | Update an existing item |
+| `DELETE` | `/items/:id` | Remove an item |
+| `GET` | `/items/low-stock` | Get items currently below threshold |
 
-**Error Response:**
-
-```json
-{
-  "success": false,
-  "message": "Name is required"
-}
-```
-
-### Internationalization (i18n)
-
-All API messages support English (`en`) and Portuguese (`pt-BR`).
-
-**Request with language parameter:**
-
-```
-GET /items?lang=pt-BR
-```
-
-**Portuguese Response:**
-
-```json
-{
-  "success": true,
-  "message": "Itens recuperados com sucesso",
-  "data": { "items": [...], "count": 1 }
-}
-```
-
-If no language is specified, the API defaults to English.
-
-### Endpoints
-
-#### 1. Create Item
-
-**Request:**
-
-```
-POST /items?lang=en
-Content-Type: application/json
-
-{
-  "name": "Laptop",
-  "quantity": 5
-}
-```
-
-**Success Response (201 Created):**
-
-```json
-{
-  "success": true,
-  "message": "Item created successfully",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Laptop",
-    "quantity": 5,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T06:32:23.638Z"
-  }
-}
-```
-
-**Error Response (400 Bad Request):**
-
-```json
-{
-  "success": false,
-  "message": "Name is required"
-}
-```
-
-#### 2. List All Items
-
-**Request:**
-
-```
-GET /items?lang=en
-```
-
-**Success Response (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Items retrieved successfully",
-  "data": {
-    "items": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "Laptop",
-        "quantity": 5,
-        "createdAt": "2026-03-27T06:32:23.638Z",
-        "updatedAt": "2026-03-27T06:32:23.638Z"
-      }
-    ],
-    "count": 1
-  }
-}
-```
-
-#### 3. Get Single Item
-
-**Request:**
-
-```
-GET /items/:id?lang=en
-```
-
-**Success Response (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item retrieved successfully",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Laptop",
-    "quantity": 5,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T06:32:23.638Z"
-  }
-}
-```
-
-**Error Response (404 Not Found):**
-
-```json
-{
-  "success": false,
-  "message": "Item not found"
-}
-```
-
-#### 4. Update Item
-
-**Request:**
-
-```
-PATCH /items/:id?lang=en
-Content-Type: application/json
-
-{
-  "quantity": 10
-}
-```
-
-**Success Response (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item updated successfully",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Laptop",
-    "quantity": 10,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T10:00:00.000Z"
-  }
-}
-```
-
-#### 5. Delete Item
-
-**Request:**
-
-```
-DELETE /items/:id?lang=en
-```
-
-**Success Response (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item deleted successfully"
-}
-```
-
-#### 6. Health Check
-
-**Request:**
-
-```
-GET /health
-```
-
-**Response (200 OK):**
-
-```json
-{
-  "status": "ok"
-}
-```
-
-## Data Model
-
-```typescript
-model Item {
-  id        String   @id @default(uuid())
-  name      String
-  quantity  Int      // Must be >= 0
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-```
-
-## Business Rules
-
-- **Quantity Validation**: Must be a non-negative integer (>= 0)
-- **Required Fields**: Creating an item requires both `name` and `quantity`
-- **Type Safety**: Name must be a string, quantity must be an integer
-- **Consistency**: All API responses follow the standard JSON format
-- **Error Handling**: All errors include localized messages and appropriate HTTP status codes
+---
 
 ## Testing
 
-### Running Tests
-
-The project includes a comprehensive test suite with 13 automated tests covering all API endpoints and edge cases.
+The backend includes a comprehensive test suite covering all business rules (SKU validation, quantity constraints, i18n).
 
 ```bash
 cd backend
 npm test
 ```
 
-### Test Database Setup
+---
 
-Tests use a separate, isolated PostgreSQL database to prevent data contamination:
+## Project Structure
 
-**Create Test Database:**
-
-```bash
-psql -U postgres -c "CREATE DATABASE inventory_test_db;"
+```text
+├── backend/            # Express server & Prisma schema
+│   ├── prisma/         # Database migrations
+│   ├── src/
+│   │   ├── controllers/# Request handlers
+│   │   ├── services/   # Business logic (database access)
+│   │   └── i18n/       # Localization JSONs
+└── frontend/           # Vite + React app
+    ├── src/
+    │   ├── api/        # Axios/Fetch client
+    │   ├── components/ # Reusable UI components
+    │   └── context/    # Language/UI state
 ```
 
-**Configure Test Environment:**
+---
 
-Create `.env.test` in the `backend/` directory:
-
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_test_db
-PORT=3000
-```
-
-**Run Migrations on Test Database:**
-
-```bash
-$env:DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_test_db"; npx prisma migrate deploy
-```
-
-### Test Coverage
-
-**POST /items** (4 tests)
-
-- ✅ Create item with valid data
-- ✅ Error when name is missing
-- ✅ Error when quantity is negative
-- ✅ Portuguese message when lang=pt-BR
-
-**GET /items** (2 tests)
-
-- ✅ List all items
-- ✅ Return empty list when no items exist
-
-**GET /items/:id** (2 tests)
-
-- ✅ Get a single item
-- ✅ Return 404 for non-existent item
-
-**PATCH /items/:id** (2 tests)
-
-- ✅ Update an item
-- ✅ Return 404 when updating non-existent item
-
-**DELETE /items/:id** (2 tests)
-
-- ✅ Delete an item
-- ✅ Return 404 when deleting non-existent item
-
-**Health Check** (1 test)
-
-- ✅ Return health status
-
-### Test Stack
-
-- **Jest**: Testing framework
-- **Supertest**: HTTP assertions for API testing
-- **ts-jest**: TypeScript support in Jest
-- **Prisma Client**: ORM for test database operations
+## 🇧🇷 Internationalization (i18n)
+This system is truly bilingual. Users can toggle the entire interface between English and Portuguese. Unlike simple UI translations, the database actively stores content in both languages:
+- `name` / `namePT`
+- `category` / `categoryPT`
+- `description` / `descriptionPT`

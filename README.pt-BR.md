@@ -1,364 +1,123 @@
-# Sistema de Inventário
+# 📦 Sistema de Inventário Full-Stack
 
-🇧🇷 Português | 🇺🇸 [English](README.md)
+🇧🇷 **Português** | 🇺🇸 [English](README.md)
 
-Uma API de gestão de inventário backend demonstrando operações CRUD RESTful com TypeScript e PostgreSQL.
+Um dashboard especializado de gestão de inventário construído com uma arquitetura full-stack profissional e type-safe. Este projeto demonstra o uso de **React (Vite)** no frontend e **Node.js (Express)** no backend, apresentando uma estética dark-mode personalizada e suporte robusto para múltiplos idiomas.
 
-Este projeto é desenvolvido como portfólio para demonstrar design de API limpo, desenvolvimento backend type-safe e persistência em banco de dados relacional.
-
-## Stack Tecnológico
-
-- Node.js
-- Express
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-- i18n (respostas da API em inglês e português)
+---
 
 ## Funcionalidades
 
-- ✅ Criar, ler, atualizar, deletar itens de inventário
-- ✅ Validação de quantidade (inteiros não-negativos)
-- ✅ Respostas da API internacionalizadas (inglês/português)
-- ✅ Arquitetura TypeScript type-safe
-- ✅ Persistência PostgreSQL com Prisma ORM
+- **Dashboard Interativo**: Interface moderna com estatísticas em tempo real (Total de Itens, Categorias, Estoque Baixo).
+- **Suporte Multi-idioma (i18n)**: Interface totalmente traduzida e campos de banco de dados especializados para conteúdo localizado (Inglês e Português).
+- **Gestão de Inventário Avançada**: 
+    - Operações CRUD completas com atualizações instantâneas na interface.
+    - Rastreamento especializado de SKUs.
+    - Indicadores automáticos de Estoque Baixo.
+- **Backend Robusto**:
+    - API RESTful com respostas JSON padronizadas.
+    - Filtragem avançada, busca e paginação.
+    - Persistência type-safe usando **Prisma ORM** e **PostgreSQL**.
+
+---
+
+## Stack Tecnológico
+
+### Frontend
+- **React 18** + **Vite** (para HMR ultra-rápido).
+- **TypeScript** para segurança de tipos de ponta a ponta.
+- **CSS Personalizado** (Vanilla) com foco em estética moderna glassmorphism e dark-mode.
+- **Hooks do React** para gestão de estado sofisticada.
+
+### Backend
+- **Node.js** + **Express**.
+- **Prisma ORM** (Tipagem no lado do cliente).
+- **Banco de Dados PostgreSQL**.
+- **Jest/Supertest** para testes de integração abrangentes.
+
+---
 
 ## Início Rápido
 
 ### Pré-requisitos
-
 - Node.js (v18+)
-- PostgreSQL (executando localmente ou conexão remota)
+- PostgreSQL (rodando localmente ou uma string de conexão remota)
 
-### Instalação
+### 1. Configuração do Banco de Dados
+1. Crie um banco de dados no PostgreSQL (ex: `inventory_db`).
+2. Atualize o arquivo `backend/.env` com a sua `DATABASE_URL`.
 
+### 2. Instalação e Configuração do Backend
 ```bash
-git clone <repo-url>
 cd backend
 npm install
-```
 
-### Configuração do Ambiente
+# Execute as migrações para configurar o schema
+npx prisma migrate dev --name init
 
-Crie um arquivo `.env` no diretório `backend/`:
-
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_db
-PORT=3000
-```
-
-### Executar Servidor de Desenvolvimento
-
-```bash
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
+*A API estará disponível em `http://localhost:3000`.*
 
-Servidor inicia em `http://localhost:3000`
+### 3. Instalação e Configuração do Frontend
+```bash
+cd frontend
+npm install
 
-## Documentação da API
-
-### URL Base
-
+# Inicie o servidor de desenvolvimento
+npm run dev
 ```
-http://localhost:3000
-```
+*O dashboard estará disponível em `http://localhost:5173`.*
 
-### Formato das Respostas
+---
 
-Todas as respostas da API seguem uma estrutura JSON consistente:
+## Referência da API
 
-**Resposta de Sucesso:**
+Todas as requisições seguem a estrutura: `http://localhost:3000/items?lang=pt-BR`
 
-```json
-{
-  "success": true,
-  "message": "Item criado com sucesso",
-  "data": { ... }
-}
-```
+| Método | Endpoint | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/items` | Lista itens (suporta `page`, `limit`, `search`, `category`) |
+| `POST` | `/items` | Cria um novo item |
+| `GET` | `/items/:id` | Obtém detalhes de um único item |
+| `PATCH` | `/items/:id` | Atualiza um item existente |
+| `DELETE` | `/items/:id` | Remove um item |
+| `GET` | `/items/low-stock` | Obtém itens atualmente abaixo do limite |
 
-**Resposta de Erro:**
-
-```json
-{
-  "success": false,
-  "message": "Nome é obrigatório"
-}
-```
-
-### Internacionalização (i18n)
-
-Todas as mensagens da API suportam inglês (`en`) e português (`pt-BR`).
-
-**Requisição com parâmetro de idioma:**
-
-```
-GET /items?lang=pt-BR
-```
-
-**Resposta em português:**
-
-```json
-{
-  "success": true,
-  "message": "Itens recuperados com sucesso",
-  "data": { "items": [...], "count": 1 }
-}
-```
-
-Se nenhum idioma for especificado, a API usa inglês por padrão.
-
-### Endpoints
-
-#### 1. Criar Item
-
-**Requisição:**
-
-```
-POST /items?lang=pt-BR
-Content-Type: application/json
-
-{
-  "name": "Notebook",
-  "quantity": 5
-}
-```
-
-**Resposta de Sucesso (201 Created):**
-
-```json
-{
-  "success": true,
-  "message": "Item criado com sucesso",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Notebook",
-    "quantity": 5,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T06:32:23.638Z"
-  }
-}
-```
-
-**Resposta de Erro (400 Bad Request):**
-
-```json
-{
-  "success": false,
-  "message": "Nome é obrigatório"
-}
-```
-
-#### 2. Listar Todos os Itens
-
-**Requisição:**
-
-```
-GET /items?lang=pt-BR
-```
-
-**Resposta de Sucesso (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Itens recuperados com sucesso",
-  "data": {
-    "items": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "name": "Notebook",
-        "quantity": 5,
-        "createdAt": "2026-03-27T06:32:23.638Z",
-        "updatedAt": "2026-03-27T06:32:23.638Z"
-      }
-    ],
-    "count": 1
-  }
-}
-```
-
-#### 3. Obter Item Único
-
-**Requisição:**
-
-```
-GET /items/:id?lang=pt-BR
-```
-
-**Resposta de Sucesso (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item recuperado com sucesso",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Notebook",
-    "quantity": 5,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T06:32:23.638Z"
-  }
-}
-```
-
-**Resposta de Erro (404 Not Found):**
-
-```json
-{
-  "success": false,
-  "message": "Item não encontrado"
-}
-```
-
-#### 4. Atualizar Item
-
-**Requisição:**
-
-```
-PATCH /items/:id?lang=pt-BR
-Content-Type: application/json
-
-{
-  "quantity": 10
-}
-```
-
-**Resposta de Sucesso (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item atualizado com sucesso",
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Notebook",
-    "quantity": 10,
-    "createdAt": "2026-03-27T06:32:23.638Z",
-    "updatedAt": "2026-03-27T10:00:00.000Z"
-  }
-}
-```
-
-#### 5. Deletar Item
-
-**Requisição:**
-
-```
-DELETE /items/:id?lang=pt-BR
-```
-
-**Resposta de Sucesso (200 OK):**
-
-```json
-{
-  "success": true,
-  "message": "Item excluído com sucesso"
-}
-```
-
-#### 6. Verificação de Saúde
-
-**Requisição:**
-
-```
-GET /health
-```
-
-**Resposta (200 OK):**
-
-```json
-{
-  "status": "ok"
-}
-```
-
-## Modelo de Dados
-
-```typescript
-model Item {
-  id        String   @id @default(uuid())
-  name      String
-  quantity  Int      // Deve ser >= 0
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-```
-
-## Regras de Negócio
-
-- **Validação de Quantidade**: Deve ser um inteiro não-negativo (>= 0)
-- **Campos Obrigatórios**: Criar um item requer tanto `name` quanto `quantity`
-- **Type Safety**: Nome deve ser uma string, quantidade deve ser um inteiro
-- **Consistência**: Todas as respostas da API seguem o formato JSON padrão
-- **Tratamento de Erros**: Todos os erros incluem mensagens localizadas e códigos HTTP apropriados
+---
 
 ## Testes
 
-### Executando Testes
-
-O projeto inclui um conjunto de testes abrangente com 13 testes automatizados cobrindo todos os endpoints da API e casos extremos.
+O backend inclui uma suíte de testes abrangente cobrindo todas as regras de negócio (validação de SKU, restrições de quantidade, i18n).
 
 ```bash
 cd backend
 npm test
 ```
 
-### Configuração do Banco de Dados de Teste
+---
 
-Os testes usam um banco de dados PostgreSQL separado e isolado para evitar contaminação de dados:
+## Estrutura do Projeto
 
-**Criar Banco de Dados de Teste:**
-
-```bash
-psql -U postgres -c "CREATE DATABASE inventory_test_db;"
+```text
+├── backend/            # Servidor Express e schema Prisma
+│   ├── prisma/         # Migrações do banco de dados
+│   ├── src/
+│   │   ├── controllers/# Handlers de requisição
+│   │   ├── services/   # Lógica de negócio (acesso ao banco)
+│   │   └── i18n/       # JSONs de localização
+└── frontend/           # App Vite + React
+    ├── src/
+    │   ├── api/        # Cliente Axios/Fetch
+    │   ├── components/ # Componentes de UI reutilizáveis
+    │   └── context/    # Estado de idioma/UI
 ```
 
-**Configurar Ambiente de Teste:**
+---
 
-Crie `.env.test` no diretório `backend/`:
-
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/inventory_test_db
-PORT=3000
-```
-
-**Executar Migrações no Banco de Dados de Teste:**
-
-```bash
-$env:DATABASE_URL="postgresql://postgres:password@localhost:5432/inventory_test_db"; npx prisma migrate deploy
-```
-
-### Cobertura de Testes
-
-**POST /items** (4 testes)
-- ✅ Criar item com dados válidos
-- ✅ Erro quando nome está faltando
-- ✅ Erro quando quantidade é negativa
-- ✅ Mensagem em português quando lang=pt-BR
-
-**GET /items** (2 testes)
-- ✅ Listar todos os itens
-- ✅ Retornar lista vazia quando não há itens
-
-**GET /items/:id** (2 testes)
-- ✅ Obter um item único
-- ✅ Retornar 404 para item não existente
-
-**PATCH /items/:id** (2 testes)
-- ✅ Atualizar um item
-- ✅ Retornar 404 ao atualizar item não existente
-
-**DELETE /items/:id** (2 testes)
-- ✅ Deletar um item
-- ✅ Retornar 404 ao deletar item não existente
-
-**Verificação de Saúde** (1 teste)
-- ✅ Retornar status de saúde
-
-### Stack de Testes
-
-- **Jest**: Framework de testes
-- **Supertest**: Assertions HTTP para testes de API
-- **ts-jest**: Suporte TypeScript no Jest
-- **Prisma Client**: ORM para operações do banco de dados de teste
+## 🇧🇷 Internacionalização (i18n)
+Este sistema é verdadeiramente bilíngue. Os usuários podem alternar toda a interface entre Inglês e Português. Diferente de simples traduções de interface, o banco de dados armazena ativamente o conteúdo em ambos os idiomas:
+- `name` / `namePT`
+- `category` / `categoryPT`
+- `description` / `descriptionPT`
