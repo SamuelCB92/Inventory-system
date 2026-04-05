@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../app";
-import { prisma, cleanupDatabase, closeDatabase } from "./setup";
+import { cleanupDatabase, closeDatabase } from "./setup";
 
 beforeAll(async () => {
   await cleanupDatabase();
@@ -27,6 +27,24 @@ describe("Items API", () => {
       expect(res.body.data.quantity).toBe(5);
     });
 
+    it("should create an item with optional fields", async () => {
+      const res = await request(app)
+        .post("/items?lang=en")
+        .send({
+          name: "Keyboard",
+          quantity: 10,
+          sku: "KB-001",
+          category: "Electronics",
+          description: "Mechanical keyboard",
+          lowStockThreshold: 3,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data.sku).toBe("KB-001");
+      expect(res.body.data.category).toBe("Electronics");
+      expect(res.body.data.lowStockThreshold).toBe(3);
+    });
+
     it("should return error when name is missing", async () => {
       const res = await request(app)
         .post("/items?lang=en")
@@ -46,6 +64,19 @@ describe("Items API", () => {
       expect(res.body.success).toBe(false);
     });
 
+    it("should return 409 when SKU already exists", async () => {
+      await request(app)
+        .post("/items")
+        .send({ name: "Laptop", quantity: 5, sku: "LAP-001" });
+
+      const res = await request(app)
+        .post("/items?lang=en")
+        .send({ name: "Laptop Pro", quantity: 3, sku: "LAP-001" });
+
+      expect(res.status).toBe(409);
+      expect(res.body.success).toBe(false);
+    });
+
     it("should return Portuguese message when lang=pt-BR", async () => {
       const res = await request(app)
         .post("/items?lang=pt-BR")
@@ -57,7 +88,7 @@ describe("Items API", () => {
   });
 
   describe("GET /items", () => {
-    it("should list all items", async () => {
+    it("should list items with pagination metadata", async () => {
       await request(app).post("/items").send({ name: "Laptop", quantity: 5 });
 
       const res = await request(app).get("/items?lang=en");
@@ -65,6 +96,9 @@ describe("Items API", () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data.items.length).toBe(1);
+      expect(res.body.data.total).toBe(1);
+      expect(res.body.data.page).toBe(1);
+      expect(res.body.data.totalPages).toBe(1);
     });
 
     it("should return empty list when no items exist", async () => {
@@ -72,6 +106,98 @@ describe("Items API", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data.items.length).toBe(0);
+      expect(res.body.data.total).toBe(0);
+    });
+
+    it("should filter items by search term", async () => {
+      await request(app).post("/items").send({ name: "Laptop", quantity: 5 });
+      await request(app).post("/items").send({ name: "Mouse", quantity: 10 });
+
+      const res = await request(app).get("/items?search=laptop");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(1);
+      expect(res.body.data.items[0].name).toBe("Laptop");
+    });
+
+    it("should filter items by category", async () => {
+      await request(app)
+        .post("/items")
+        .send({ name: "Laptop", quantity: 5, category: "Electronics" });
+      await request(app)
+        .post("/items")
+        .send({ name: "Desk", quantity: 2, category: "Furniture" });
+
+      const res = await request(app).get("/items?category=Electronics");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(1);
+      expect(res.body.data.items[0].category).toBe("Electronics");
+    });
+
+    it("should paginate correctly", async () => {
+      for (let i = 1; i <= 15; i++) {
+        await request(app)
+          .post("/items")
+          .send({ name: `Item ${i}`, quantity: i });
+      }
+
+      const res = await request(app).get("/items?page=2&limit=10");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(5);
+      expect(res.body.data.page).toBe(2);
+      expect(res.body.data.totalPages).toBe(2);
+      expect(res.body.data.total).toBe(15);
+    });
+  });
+
+  describe("GET /items/low-stock", () => {
+    it("should return items where quantity is at or below threshold", async () => {
+      await request(app)
+        .post("/items")
+        .send({ name: "Low Item", quantity: 2, lowStockThreshold: 5 });
+      await request(app)
+        .post("/items")
+        .send({ name: "OK Item", quantity: 20, lowStockThreshold: 5 });
+
+      const res = await request(app).get("/items/low-stock");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(1);
+      expect(res.body.data.items[0].name).toBe("Low Item");
+    });
+
+    it("should not include items with threshold of 0", async () => {
+      await request(app)
+        .post("/items")
+        .send({ name: "No Threshold", quantity: 0, lowStockThreshold: 0 });
+
+      const res = await request(app).get("/items/low-stock");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.items.length).toBe(0);
+    });
+  });
+
+  describe("GET /items/categories", () => {
+    it("should return distinct categories", async () => {
+      await request(app)
+        .post("/items")
+        .send({ name: "Laptop", quantity: 5, category: "Electronics" });
+      await request(app)
+        .post("/items")
+        .send({ name: "Monitor", quantity: 3, category: "Electronics" });
+      await request(app)
+        .post("/items")
+        .send({ name: "Desk", quantity: 1, category: "Furniture" });
+
+      const res = await request(app).get("/items/categories");
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.categories).toHaveLength(2);
+      expect(res.body.data.categories).toContain("Electronics");
+      expect(res.body.data.categories).toContain("Furniture");
     });
   });
 
@@ -99,7 +225,7 @@ describe("Items API", () => {
   });
 
   describe("PATCH /items/:id", () => {
-    it("should update an item", async () => {
+    it("should update an item quantity", async () => {
       const createRes = await request(app)
         .post("/items")
         .send({ name: "Keyboard", quantity: 3 });
@@ -112,6 +238,21 @@ describe("Items API", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data.quantity).toBe(15);
+    });
+
+    it("should update an item name", async () => {
+      const createRes = await request(app)
+        .post("/items")
+        .send({ name: "Old Name", quantity: 3 });
+
+      const itemId = createRes.body.data.id;
+
+      const res = await request(app)
+        .patch(`/items/${itemId}?lang=en`)
+        .send({ name: "New Name" });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.name).toBe("New Name");
     });
 
     it("should return 404 when updating non-existent item", async () => {
@@ -175,8 +316,18 @@ describe("POST /items validation", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Quantity must be a non-negative integer");
+  });
+
+  it("should return 400 for negative lowStockThreshold", async () => {
+    const response = await request(app)
+      .post("/items")
+      .send({ name: "Test", quantity: 5, lowStockThreshold: -1 });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
     expect(response.body.message).toBe(
-      "Quantity must be a non-negative integer",
+      "Low stock threshold must be a non-negative integer",
     );
   });
 });
@@ -194,8 +345,6 @@ describe("PATCH /items/:id validation", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.success).toBe(false);
-    expect(response.body.message).toBe(
-      "Quantity must be a non-negative integer",
-    );
+    expect(response.body.message).toBe("Quantity must be a non-negative integer");
   });
 });

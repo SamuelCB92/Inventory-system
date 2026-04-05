@@ -10,6 +10,9 @@
   "quantityRequired": "Quantidade é obrigatória",
   "quantityMustBeNonNegative": "Quantidade deve ser um inteiro não negativo",
   "nameMustBeString": "Nome deve ser uma string",
+  "skuMustBeString": "SKU deve ser uma string",
+  "skuAlreadyExists": "Já existe um item com este SKU",
+  "lowStockThresholdMustBeNonNegative": "O limite de estoque baixo deve ser um inteiro não negativo",
   "idInvalid": "ID do item inválido",
   "internalServerError": "Erro interno do servidor"
 }

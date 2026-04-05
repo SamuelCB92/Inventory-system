@@ -7,8 +7,8 @@ const translations: { [key: string]: { [key: string]: string } } = {
 };
 
 export function getMessage(key: string, lang: string = "en"): string {
-  const translation = translations[lang] || translations.en;
-  return translation[key] || key;
+  const translation = translations[lang] ?? translations["en"];
+  return translation![key] ?? key;
 }
 
 export function getLang(req: any): string {

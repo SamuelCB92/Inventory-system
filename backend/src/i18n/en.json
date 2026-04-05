@@ -10,6 +10,9 @@
   "quantityRequired": "Quantity is required",
   "quantityMustBeNonNegative": "Quantity must be a non-negative integer",
   "nameMustBeString": "Name must be a string",
+  "skuMustBeString": "SKU must be a string",
+  "skuAlreadyExists": "An item with this SKU already exists",
+  "lowStockThresholdMustBeNonNegative": "Low stock threshold must be a non-negative integer",
   "idInvalid": "Invalid item ID",
   "internalServerError": "Internal server error"
 }

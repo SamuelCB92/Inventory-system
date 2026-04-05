@@ -8,7 +8,7 @@ export function validateCreateItem(
   next: NextFunction,
 ) {
   const lang = getLang(req);
-  const { name, quantity } = req.body ?? {};
+  const { name, quantity, sku, lowStockThreshold } = req.body ?? {};
 
   if (!name) {
     return sendError(res, getMessage("nameRequired", lang), 400);
@@ -26,6 +26,21 @@ export function validateCreateItem(
     return sendError(res, getMessage("quantityMustBeNonNegative", lang), 400);
   }
 
+  if (sku !== undefined && typeof sku !== "string") {
+    return sendError(res, getMessage("skuMustBeString", lang), 400);
+  }
+
+  if (
+    lowStockThreshold !== undefined &&
+    (!Number.isInteger(lowStockThreshold) || lowStockThreshold < 0)
+  ) {
+    return sendError(
+      res,
+      getMessage("lowStockThresholdMustBeNonNegative", lang),
+      400,
+    );
+  }
+
   next();
 }
 
@@ -35,7 +50,7 @@ export function validateUpdateItem(
   next: NextFunction,
 ) {
   const lang = getLang(req);
-  const { name, quantity } = req.body ?? {};
+  const { name, quantity, sku, lowStockThreshold } = req.body ?? {};
 
   if (name !== undefined && typeof name !== "string") {
     return sendError(res, getMessage("nameMustBeString", lang), 400);
@@ -43,6 +58,21 @@ export function validateUpdateItem(
 
   if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
     return sendError(res, getMessage("quantityMustBeNonNegative", lang), 400);
+  }
+
+  if (sku !== undefined && sku !== null && typeof sku !== "string") {
+    return sendError(res, getMessage("skuMustBeString", lang), 400);
+  }
+
+  if (
+    lowStockThreshold !== undefined &&
+    (!Number.isInteger(lowStockThreshold) || lowStockThreshold < 0)
+  ) {
+    return sendError(
+      res,
+      getMessage("lowStockThresholdMustBeNonNegative", lang),
+      400,
+    );
   }
 
   next();
