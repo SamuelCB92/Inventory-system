@@ -32,8 +32,8 @@ RUN apk add --no-cache openssl
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install ONLY production dependencies
-RUN npm install --omit=dev
+# Install production dependencies plus ts-node for prisma db seed
+RUN npm install --omit=dev && npm install ts-node typescript
 
 # Generate Prisma client for the production environment
 RUN npx prisma generate
@@ -49,4 +49,4 @@ ENV DATABASE_URL=""
 ENV NODE_ENV="production"
 ENV PORT=10000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm start"]
