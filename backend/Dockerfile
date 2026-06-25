@@ -44,5 +44,9 @@ COPY --from=build /app/dist ./dist
 # Expose the API port
 EXPOSE 3000
 
-# Use a shell script to run migrations and then the compiled app
+# Declare env vars so Render can inject them at runtime
+ENV DATABASE_URL=""
+ENV NODE_ENV="production"
+ENV PORT=10000
+
 CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
