@@ -45,7 +45,6 @@ COPY --from=build /app/dist ./dist
 EXPOSE 3000
 
 # Declare env vars so Render can inject them at runtime
-ENV DATABASE_URL=""
 ENV NODE_ENV="production"
 ENV PORT=10000
 
