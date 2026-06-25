@@ -1,5 +1,7 @@
 # Full-Stack Inventory System
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-inventory--system--samuel.vercel.app-646CFF?style=for-the-badge&logo=vercel&logoColor=white)](https://inventory-system-samuel.vercel.app)
+
 🇺🇸 **English** | 🇧🇷 [Português](README.pt-BR.md)
 
 A specialized inventory management dashboard built with a professional, type-safe full-stack architecture. This project showcases **React (Vite)** on the frontend and **Node.js (Express)** on the backend, featuring a customized dark-mode aesthetic and robust multi-language support.
@@ -35,6 +37,26 @@ A specialized inventory management dashboard built with a professional, type-saf
 - **PostgreSQL** relational database.
 - **Jest/Supertest** for comprehensive integration testing.
 
+### Deployment
+- **Frontend**: [Vercel](https://vercel.com)
+- **Backend**: [Render](https://render.com)
+- **Database**: [Neon](https://neon.tech) (PostgreSQL)
+
+---
+
+## Seed Data
+
+The production database is pre-populated with **15 realistic IT inventory items** (peripherals, storage, networking, power, and office supplies). Each item includes bilingual fields (English and Portuguese) and several low-stock examples for demo purposes.
+
+Seeding is handled by an idempotent upsert script at `backend/prisma/seed.ts`, so it is safe to run multiple times without creating duplicates. In Docker/Render deployments, the seed runs automatically on container startup after migrations.
+
+To seed a local database manually:
+
+```bash
+cd backend
+npx prisma db seed
+```
+
 ---
 
 ## Quick Start
@@ -65,10 +87,16 @@ npm run dev
 cd frontend
 npm install
 
+# Create frontend/.env and point the app at your backend API
+# Example for local development:
+# VITE_API_URL=http://localhost:3000
+
 # Start dev server
 npm run dev
 ```
 *The dashboard will be available at `http://localhost:5173`.*
+
+> **Note:** `VITE_API_URL` must be set in `frontend/.env` for the frontend to connect to the backend. Without it, the app falls back to `http://localhost:3000`.
 
 ---
 

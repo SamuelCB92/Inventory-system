@@ -1,5 +1,7 @@
 # Sistema de Inventário Full-Stack
 
+[![Demo ao Vivo](https://img.shields.io/badge/Demo_ao_Vivo-inventory--system--samuel.vercel.app-646CFF?style=for-the-badge&logo=vercel&logoColor=white)](https://inventory-system-samuel.vercel.app)
+
 🇧🇷 **Português** | 🇺🇸 [English](README.md)
 
 Um dashboard especializado de gestão de inventário construído com uma arquitetura full-stack profissional e type-safe. Este projeto demonstra o uso de **React (Vite)** no frontend e **Node.js (Express)** no backend, apresentando uma estética dark-mode personalizada e suporte robusto para múltiplos idiomas.
@@ -35,6 +37,26 @@ Um dashboard especializado de gestão de inventário construído com uma arquite
 - **Banco de Dados PostgreSQL**.
 - **Jest/Supertest** para testes de integração abrangentes.
 
+### Deploy
+- **Frontend**: [Vercel](https://vercel.com)
+- **Backend**: [Render](https://render.com)
+- **Banco de Dados**: [Neon](https://neon.tech) (PostgreSQL)
+
+---
+
+## Dados de Seed
+
+O banco de dados em produção é pré-populado com **15 itens realistas de inventário de TI** (periféricos, armazenamento, rede, energia e material de escritório). Cada item inclui campos bilíngues (inglês e português) e alguns exemplos de estoque baixo para demonstração.
+
+O seed é feito por um script idempotente com upsert em `backend/prisma/seed.ts`, seguro para executar várias vezes sem criar duplicatas. Em deploys Docker/Render, o seed roda automaticamente na inicialização do container, após as migrações.
+
+Para popular um banco local manualmente:
+
+```bash
+cd backend
+npx prisma db seed
+```
+
 ---
 
 ## Início Rápido
@@ -65,10 +87,16 @@ npm run dev
 cd frontend
 npm install
 
+# Crie frontend/.env apontando para a API do backend
+# Exemplo para desenvolvimento local:
+# VITE_API_URL=http://localhost:3000
+
 # Inicie o servidor de desenvolvimento
 npm run dev
 ```
 *O dashboard estará disponível em `http://localhost:5173`.*
+
+> **Nota:** `VITE_API_URL` deve ser definida em `frontend/.env` para o frontend conectar ao backend. Sem isso, o app usa `http://localhost:3000` como fallback.
 
 ---
 
