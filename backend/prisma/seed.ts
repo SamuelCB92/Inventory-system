@@ -171,6 +171,11 @@ const seedItems = [
 ] as const;
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  console.log("Starting database seed...");
   await prisma.item.deleteMany();
 
   for (const item of seedItems) {

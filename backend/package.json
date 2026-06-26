@@ -7,6 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc && tsc -p tsconfig.seed.json",
     "start": "node dist/server.js",
+    "seed": "node dist/prisma/seed.js",
     "test": "jest"
   },
   "keywords": [],
@@ -20,7 +21,7 @@
     "prisma": "^5.22.0"
   },
   "prisma": {
-    "seed": "node dist/prisma/seed.js"
+    "seed": "npm run seed"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

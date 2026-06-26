@@ -19,6 +19,7 @@ COPY . .
 # Generate Prisma client and build typescript code
 RUN npx prisma generate
 RUN npm run build
+RUN test -f dist/prisma/seed.js && test -f dist/server.js
 
 # Stage 2: Production environment
 FROM node:20-alpine
@@ -40,6 +41,7 @@ RUN npx prisma generate
 
 # Copy built directory from builder stage
 COPY --from=build /app/dist ./dist
+RUN test -f dist/prisma/seed.js && test -f dist/server.js
 
 # Expose the API port
 EXPOSE 3000
@@ -48,4 +50,4 @@ EXPOSE 3000
 ENV NODE_ENV="production"
 ENV PORT=10000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma db seed && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run seed && npm start"]
