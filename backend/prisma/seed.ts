@@ -171,6 +171,8 @@ const seedItems = [
 ] as const;
 
 async function main() {
+  await prisma.item.deleteMany();
+
   for (const item of seedItems) {
     await prisma.item.upsert({
       where: { sku: item.sku },

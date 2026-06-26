@@ -46,9 +46,13 @@ Um dashboard especializado de gestão de inventário construído com uma arquite
 
 ## Dados de Seed
 
-O banco de dados em produção é pré-populado com **15 itens realistas de inventário de TI** (periféricos, armazenamento, rede, energia e material de escritório). Cada item inclui campos bilíngues (inglês e português) e alguns exemplos de estoque baixo para demonstração.
+A demo ao vivo é um **sandbox compartilhado**: visitantes podem testar CRUD, busca, filtros e alertas de estoque baixo com dados reais, sem precisar de login.
 
-O seed é feito por um script idempotente com upsert em `backend/prisma/seed.ts`, seguro para executar várias vezes sem criar duplicatas. Em deploys Docker/Render, o seed roda automaticamente na inicialização do container, após as migrações.
+O banco em produção começa com **15 itens realistas de inventário de TI** (periféricos, armazenamento, rede, energia e material de escritório). Cada item inclui campos bilíngues (inglês e português) e alguns exemplos de estoque baixo.
+
+O script de seed em `backend/prisma/seed.ts` limpa todos os itens (`deleteMany`) e recarrega os 15 itens de demonstração a cada execução. Em deploys Docker/Render, o seed roda automaticamente na inicialização do container, após as migrações.
+
+No **plano gratuito do Render**, o backend entra em sleep após ~15 minutos de inatividade. A próxima visita dispara um cold start, reexecuta o seed e restaura um estado limpo para o próximo usuário.
 
 Para popular um banco local manualmente:
 

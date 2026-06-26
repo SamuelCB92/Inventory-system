@@ -46,9 +46,13 @@ A specialized inventory management dashboard built with a professional, type-saf
 
 ## Seed Data
 
-The production database is pre-populated with **15 realistic IT inventory items** (peripherals, storage, networking, power, and office supplies). Each item includes bilingual fields (English and Portuguese) and several low-stock examples for demo purposes.
+The live demo is a **shared sandbox**: visitors can test CRUD, search, filters, and low-stock features on real data without signing in.
 
-Seeding is handled by an idempotent upsert script at `backend/prisma/seed.ts`, so it is safe to run multiple times without creating duplicates. In Docker/Render deployments, the seed runs automatically on container startup after migrations.
+The production database starts with **15 realistic IT inventory items** (peripherals, storage, networking, power, and office supplies). Each item includes bilingual fields (English and Portuguese) and several low-stock examples.
+
+The seed script at `backend/prisma/seed.ts` clears all items (`deleteMany`) and reloads the 15 demo items on every run. In Docker/Render deployments, seed runs automatically on container startup after migrations.
+
+On the **Render free tier**, the backend spins down after ~15 minutes of inactivity. The next visit triggers a cold start, re-runs the seed, and restores a clean demo state for the next user.
 
 To seed a local database manually:
 
