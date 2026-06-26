@@ -32,8 +32,8 @@ RUN apk add --no-cache openssl
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install production dependencies plus ts-node for prisma db seed
-RUN npm install --omit=dev && npm install ts-node typescript
+# Install production dependencies only
+RUN npm install --omit=dev
 
 # Generate Prisma client for the production environment
 RUN npx prisma generate
